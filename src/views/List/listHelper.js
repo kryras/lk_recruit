@@ -5,11 +5,11 @@ export const filterList = (item, search) => {
    return Object.entries(item).some(
       ([key, value]) =>
          keysToFilter.includes(key) &&
-         (value.toLowerCase?.().includes(search) ??
+         (value.toLowerCase?.().includes(search.toLowerCase()) ??
             value
                .join(',')
                .toLowerCase()
-               .includes(search))
+               .includes(search.toLowerCase()))
    )
 }
 export const mapList = item => {
