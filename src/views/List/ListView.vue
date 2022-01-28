@@ -22,6 +22,13 @@
          @save="saveChanges"
       />
    </div>
+   <div class="content p-2">
+      <blockquote>
+         <i>Aut viam inveniam aut,faciam</i>
+         <br />
+         <i>Albo znajdę drogę, albo ją sobie utoruję</i>
+      </blockquote>
+   </div>
 </template>
 <script>
 import Table from '@/components/Table.vue'
