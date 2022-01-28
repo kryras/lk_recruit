@@ -10,17 +10,28 @@
             />
          </div>
       </div>
-      <Table :content="tableContent" :config="tableConfig" />
+      <Table
+         :content="tableContent"
+         :config="tableConfig"
+         @select="showModal"
+      />
+      <ListItemEditModal
+         v-if="modalVisible"
+         @close="closeModal"
+         :item="selectedItem"
+         @save="saveChanges"
+      />
    </div>
 </template>
 <script>
 import Table from '@/components/Table.vue'
-import { computed, onMounted, reactive } from 'vue'
+import ListItemEditModal from './components/ListItemEditModal.vue'
+import { computed, onMounted, reactive, toRefs } from 'vue'
 import { filterList, mapList } from './listHelper'
 import dummy from '@/assets/dummy.json'
 import timeout from 'q'
 export default {
-   components: { Table },
+   components: { Table, ListItemEditModal },
    setup() {
       const tableConfig = {
          columns: [
@@ -35,7 +46,9 @@ export default {
          items: [],
          initLoading: true,
          search: '',
-         timeout
+         timeout,
+         modalVisible: false,
+         selectedItem: {}
       })
       const tableContent = computed(() =>
          state.items.filter(item => filterList(item, state.search)).map(mapList)
@@ -56,7 +69,35 @@ export default {
          await mockRequest()
          state.loading = false
       })
-      return { tableContent, tableConfig, onInput }
+
+      let { modalVisible, selectedItem } = toRefs(state)
+      const showModal = row => {
+         state.selectedItem = row
+         state.modalVisible = true
+      }
+      const closeModal = () => {
+         state.selectedItem = {}
+         state.modalVisible = false
+      }
+
+      const saveChanges = item => {
+         const itemToChange = state.items.find(
+            element => element.id === item.id
+         )
+         Object.assign(itemToChange, item)
+         closeModal()
+      }
+
+      return {
+         tableContent,
+         tableConfig,
+         onInput,
+         showModal,
+         closeModal,
+         modalVisible,
+         selectedItem,
+         saveChanges
+      }
    }
 }
 </script>
